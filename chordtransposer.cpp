@@ -1,4 +1,4 @@
-#include "chordtransposer.h""
+#include "chordtransposer.h"
 #include <QRegExp>
 #include <QMap>
 #include <algorithm>

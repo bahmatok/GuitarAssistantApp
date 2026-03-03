@@ -1,6 +1,6 @@
 #include "timer.h"
 
-Timer::Timer(QObject *parent) : QObject(parent)
+Timer::Timer(QObject *parent) : QObject(parent), tickingValue(1000)
 {
     timer = new QTimer(this);
     timer->stop();

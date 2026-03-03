@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QDataStream>
 #include <cmath>
+#include <QCoreApplication>
+#include <QDir>
 
 Tuner::Tuner(QObject *parent) : QObject(parent), currentType(SixString) {
     updateFrequencies();
@@ -83,37 +85,49 @@ QByteArray Tuner::generateSoundData(double frequency, int sampleRate, int durati
     return byteArray;
 }
 
-QString Tuner::generateSoundFile(double frequency) {
+QString Tuner::generateSoundFile(double frequency)
+{
     const int sampleRate = 44100;
     const int duration = 2; // seconds
 
     QByteArray soundData = generateSoundData(frequency, sampleRate, duration);
 
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString tonesDir = appDir + "/generated_tones";
+
+    QDir dir;
+    if (!dir.exists(tonesDir)) {
+        dir.mkpath(tonesDir);
+    }
+
     QString fileName = QString("tone_%1.wav").arg(frequency);
-    QFile file(fileName);
+    QString filePath = tonesDir + "/" + fileName;
+
+    QFile file(filePath);
     if (file.open(QIODevice::WriteOnly)) {
         QDataStream out(&file);
-
+        out.setByteOrder(QDataStream::LittleEndian);
+        
         // Write WAV file header
         out.writeRawData("RIFF", 4);
         int chunkSize = 36 + soundData.size();
         out.writeRawData(reinterpret_cast<const char*>(&chunkSize), sizeof(chunkSize));
         out.writeRawData("WAVE", 4);
-
+        
         // Write fmt subchunk
         out.writeRawData("fmt ", 4);
         int subChunk1Size = 16; // 16 for PCM
         out.writeRawData(reinterpret_cast<const char*>(&subChunk1Size), sizeof(subChunk1Size));
         short audioFormat = 1; // PCM = 1
         out.writeRawData(reinterpret_cast<const char*>(&audioFormat), sizeof(audioFormat));
-        short numChannels = 1; // Mono = 1
+        short numChannels = 1; // mono = 1
         out.writeRawData(reinterpret_cast<const char*>(&numChannels), sizeof(numChannels));
         out.writeRawData(reinterpret_cast<const char*>(&sampleRate), sizeof(sampleRate));
         int byteRate = sampleRate * numChannels * sizeof(qint16); // sampleRate * numChannels * bitsPerSample/8
         out.writeRawData(reinterpret_cast<const char*>(&byteRate), sizeof(byteRate));
         short blockAlign = numChannels * sizeof(qint16); // numChannels * bitsPerSample/8
         out.writeRawData(reinterpret_cast<const char*>(&blockAlign), sizeof(blockAlign));
-        short bitsPerSample = 16; // 16 bits
+        short bitsPerSample = 16;
         out.writeRawData(reinterpret_cast<const char*>(&bitsPerSample), sizeof(bitsPerSample));
 
         // Write data subchunk
@@ -125,6 +139,5 @@ QString Tuner::generateSoundFile(double frequency) {
         file.close();
     }
 
-    return fileName;
+    return filePath;
 }
-

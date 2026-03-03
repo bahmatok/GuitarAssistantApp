@@ -77,54 +77,66 @@ QString MainWindow::xorEncrypt(QString str)
 
 void MainWindow::saveSettings()
 {
-    QString settingsStr = "";
+    QString settingsStr;
     QString volume = QString::number(ui->volumeSlider->value());
     QString BPM = QString::number(ui->BPMSlider->value());
-    QString stressFirstBit = (ui->stressFirstBitCheckBox->isChecked())?"1":"0";
+    QString stressFirstBit = ui->stressFirstBitCheckBox->isChecked() ? "1" : "0";
     settingsStr = volume + " " + BPM + " " + stressFirstBit + " ";
 
     QString chordsStr;
-    if(ui->textEdit->toPlainText() != "" && ui->textEdit->toPlainText() != "Неправильный ввод. Пожалуйста, прочитайте правила ввода аккордов и введите правильные аккорды.")
-    {
-        chordsStr = ui->textEdit->toPlainText();
-    }
-    else
-    {
+    QString text = ui->textEdit->toPlainText();
+    if (!text.isEmpty() && text != "Неправильный ввод. Пожалуйста, прочитайте правила ввода аккордов и введите правильные аккорды.") {
+        chordsStr = text;
+    } else {
         chordsStr = "No data";
     }
     settingsStr += chordsStr;
 
-    QFile _file("/home/bahmatok/coursach/untitled1/settings.txt");
-    if (!_file.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(this, "Warning", "Произошла ошибка! Ваши настройки не сохранены :(");
+    QString filePath = "settings.txt";
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Предупреждение", "Не удаётся сохранить настройки: невозможно открыть файл для записи.");
         return;
     }
-    QTextStream textStream(&_file);
-    textStream << xorEncrypt(settingsStr);
-    _file.close();
+
+    QTextStream out(&file);
+    out << xorEncrypt(settingsStr);
+    file.close();
 }
 
 void MainWindow::getSettings()
 {
-    QFile _file("/home/bahmatok/coursach/untitled1/settings.txt");
-    if (!_file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(this, "Warning", "Произошла ошибка! Не удаётся получить сохранённые настройки :(");
+    QString filePath = "settings.txt";
+    QFile file(filePath);
+
+    if (!file.exists()) {
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::critical(this, "Ошибка", "Не удаётся создать файл настроек!");
+            _isGetSettings = false;
+            return;
+        }
+        file.close(); 
+    }
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Предупреждение", "Не удаётся открыть файл настроек для чтения!");
         _isGetSettings = false;
         return;
     }
 
-    QTextStream in(&_file);
-    _settingsStr = "";
+    QTextStream in(&file);
     _settingsStr = in.readAll();
-    if(_settingsStr == "")
-    {
+    file.close();
+
+    if (_settingsStr.isEmpty()) {
+        QMessageBox::warning(this, "Предупреждение", "Не удаётся получить настройки: файл пуст.");
         _isGetSettings = false;
         return;
     }
+
     _settingsStr = xorEncrypt(_settingsStr);
-    _file.close();
+    _isGetSettings = true;
 }
 
 void MainWindow::setMetronomeConnection()
@@ -169,6 +181,7 @@ void MainWindow::setMetronomeConnection()
 
     ticker = new Ticker(this);
     timer = new Timer(this);
+    timer->setTickingValue(ui->BPMSlider->value());
     connect(timer, &Timer::timeout, ticker, &Ticker::playSound);
 
     connect(ui->volumeSlider, static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
