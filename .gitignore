@@ -1,0 +1,32 @@
+# Compiled Object files
+*.o
+*.obj
+
+# Qt generated files
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+.qmake.stash
+Makefile
+Makefile.*
+
+# Executables
+*.exe
+*.out
+GuitarAssistantApp
+
+# Build directories
+build/
+debug/
+release/
+
+# IDE files
+.vscode/
+*.pro.user
+*.pro.user.*
+.qtc_clangd/
+
+# Application data
+settings.txt
+generated_tones/
