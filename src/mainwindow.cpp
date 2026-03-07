@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+bool MainWindow::m_suppressMessages = false;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -96,7 +98,8 @@ void MainWindow::saveSettings()
     QFile file(filePath);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Предупреждение", "Не удаётся сохранить настройки: невозможно открыть файл для записи.");
+        if (!m_suppressMessages)
+            QMessageBox::warning(this, "Предупреждение", "Не удаётся сохранить настройки: невозможно открыть файл для записи.");
         return;
     }
 
@@ -112,7 +115,8 @@ void MainWindow::getSettings()
 
     if (!file.exists()) {
         if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::critical(this, "Ошибка", "Не удаётся создать файл настроек!");
+            if (!m_suppressMessages)
+                QMessageBox::critical(this, "Ошибка", "Не удаётся создать файл настроек!");
             _isGetSettings = false;
             return;
         }
@@ -120,7 +124,8 @@ void MainWindow::getSettings()
     }
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Предупреждение", "Не удаётся открыть файл настроек для чтения!");
+        if (!m_suppressMessages)
+            QMessageBox::warning(this, "Предупреждение", "Не удаётся открыть файл настроек для чтения!");
         _isGetSettings = false;
         return;
     }
@@ -130,7 +135,8 @@ void MainWindow::getSettings()
     file.close();
 
     if (_settingsStr.isEmpty()) {
-        QMessageBox::warning(this, "Предупреждение", "Не удаётся получить настройки: файл пуст.");
+        if (!m_suppressMessages)
+            QMessageBox::warning(this, "Предупреждение", "Не удаётся получить настройки: файл пуст.");
         _isGetSettings = false;
         return;
     }

@@ -24,6 +24,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    #ifdef QT_TESTLIB_LIB
+        Ui::MainWindow* testUi() const { return ui; }
+        void setKeyForTesting(const QString& key) { _key = key; }
+    #endif
+    static void suppressMessageBoxes(bool suppress) { m_suppressMessages = suppress; }
+    static bool m_suppressMessages;
+
 private slots:
     void on_fromChordTransposerToMetronomeButton_clicked();
 
@@ -118,5 +125,7 @@ private:
     int stringNumber = 1;
     QStringList chords;
     bool _isGetSettings = true;
+
+    friend class TestMainWindow;
 };
 #endif // MAINWINDOW_H
