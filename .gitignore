@@ -21,6 +21,7 @@ tests/test_chordtransposer/test_chordtransposer
 tests/test_timer/test_timer
 tests/test_ticker/test_ticker
 tests/test_tuner/test_tuner
+tests/test_mainwindow/test_mainwindow
 
 # Build directories
 build/
