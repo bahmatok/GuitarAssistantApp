@@ -31,6 +31,8 @@ private:
     QSoundEffect soundEffect;
     QByteArray generateSoundData(double frequency, int sampleRate, int duration);
     QString generateSoundFile(double frequency);
+
+    friend class TestTuner;
 };
 
 #endif // TUNER_H
