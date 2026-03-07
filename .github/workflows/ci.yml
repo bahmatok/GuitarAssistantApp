@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, demo-test-fail ]
   pull_request:
     branches: [ master ]
 
@@ -53,7 +53,7 @@ jobs:
         qmake tests.pro
         make
 
-    - name: Run tests with xvfb
+    - name: Run tests
       run: |
         cd tests
         for test in test_chordtransposer/test_chordtransposer \
@@ -62,5 +62,5 @@ jobs:
                     test_tuner/test_tuner \
                     test_mainwindow/test_mainwindow; do
           echo "Running $test"
-          QT_QPA_PLATFORM=offscreen ./$test
+          QT_QPA_PLATFORM=offscreen ./$test || { echo "Test failed: $test"; exit 1; }
         done
