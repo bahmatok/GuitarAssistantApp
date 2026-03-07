@@ -24,6 +24,8 @@ private:
     QTimer *timer;
     int tickingValue;
     bool buttonClicked;
+
+    friend class TestTimer;
 };
 
 #endif // TIMER_H
