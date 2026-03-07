@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y \
+          build-essential \
+          qtbase5-dev \
+          qtmultimedia5-dev \
+          libqt5test5-dev \
+          libqt5widgets5 \
+          libqt5multimedia5-plugins \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-ugly \
+          gstreamer1.0-libav \
+          xvfb \
+          libgl1-mesa-dev \
+          libxcb-xinerama0-dev \
+          libxcb-icccm4-dev \
+          libxcb-image0-dev \
+          libxcb-keysyms1-dev \
+          libxcb-randr0-dev \
+          libxcb-render-util0-dev \
+          libxcb-shape0-dev \
+          libxcb-sync-dev \
+          libxcb-xfixes0-dev \
+          libxcb-xkb-dev \
+          libxkbcommon-x11-dev
+
+    - name: Build main application
+      run: |
+        qmake GuitarAssistantApp.pro
+        make
+
+    - name: Build tests
+      run: |
+        cd tests
+        qmake tests.pro
+        make
+
+    - name: Run tests with xvfb
+      run: |
+        cd tests
+        for test in test_chordtransposer/test_chordtransposer \
+                    test_timer/test_timer \
+                    test_ticker/test_ticker \
+                    test_tuner/test_tuner \
+                    test_mainwindow/test_mainwindow; do
+          echo "Running $test"
+          xvfb-run ./$test
+        done
