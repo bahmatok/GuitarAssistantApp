@@ -21,7 +21,6 @@ jobs:
           build-essential \
           qtbase5-dev \
           qtmultimedia5-dev \
-          libqt5test5-dev \
           libqt5widgets5 \
           libqt5multimedia5-plugins \
           gstreamer1.0-plugins-base \
