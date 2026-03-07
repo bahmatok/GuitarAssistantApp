@@ -23,6 +23,8 @@ private:
     QMediaPlaylist *playlist;
     int counter;
     bool stressFirstBeat;
+
+    friend class TestTicker;
 };
 
 #endif // TICKER_H

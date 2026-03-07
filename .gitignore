@@ -18,6 +18,8 @@ Makefile.*
 *.out
 GuitarAssistantApp
 tests/test_chordtransposer/test_chordtransposer
+tests/test_timer/test_timer
+tests/test_ticker/test_ticker
 
 # Build directories
 build/
