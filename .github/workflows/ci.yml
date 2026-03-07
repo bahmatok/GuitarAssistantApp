@@ -62,5 +62,5 @@ jobs:
                     test_tuner/test_tuner \
                     test_mainwindow/test_mainwindow; do
           echo "Running $test"
-          xvfb-run ./$test
+          QT_QPA_PLATFORM=offscreen ./$test
         done
