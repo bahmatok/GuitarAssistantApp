@@ -19,6 +19,8 @@ private:
     void heapify(QVector<QString> &chords, int n, int i);
     QStringList transposeRepeatedSubstrings(const QStringList &chords, int transposeInterval);
     QString transposeChord(const QString &chord, int interval);
+
+    friend class TestChordTransposer; 
 };
 
 #endif // CHORDTRANSPOSER_H

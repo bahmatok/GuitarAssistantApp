@@ -10,11 +10,14 @@ ui_*.h
 .qmake.stash
 Makefile
 Makefile.*
+*.moc
+*.sh
 
 # Executables
 *.exe
 *.out
 GuitarAssistantApp
+tests/test_chordtransposer/test_chordtransposer
 
 # Build directories
 build/
