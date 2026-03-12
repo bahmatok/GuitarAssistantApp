@@ -72,7 +72,7 @@ bool ChordTransposer::hasRepeatedSubstring(const QString &input) {
 }
 
 QStringList ChordTransposer::transposeChords(const QStringList &chords, int transposeInterval) {
-    /*if (hasRepeatedSubstring(chords.join(" "))) {
+    if (hasRepeatedSubstring(chords.join(" "))) {
         return transposeRepeatedSubstrings(chords, transposeInterval);
     } else {
         QStringList transposedChords;
@@ -80,8 +80,7 @@ QStringList ChordTransposer::transposeChords(const QStringList &chords, int tran
             transposedChords.append(transposeChord(chord, transposeInterval));
         }
         return transposedChords;
-    }*/
-   return chords;
+    }
 }
 
 QStringList ChordTransposer::transposeRepeatedSubstrings(const QStringList &chords, int transposeInterval) {
